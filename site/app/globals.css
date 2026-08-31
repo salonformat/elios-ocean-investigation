@@ -470,6 +470,90 @@ button,.design-entry{font-family:var(--font-josefin),sans-serif;-webkit-tap-high
   .fauna-layer{opacity:.27}.fish-layer{opacity:.34}.flora-layer{opacity:.48}
 }
 
+/* Compact narrative panels: the text guides, the ocean remains the experience. */
+.hero-copy{width:min(43vw,560px)}
+.hero-copy h1{font-size:clamp(36px,4vw,59px)}
+.hero-copy .lead{max-width:530px;font-size:clamp(15px,1vw,17px);line-height:1.52}
+.descent-copy{width:min(500px,66vw)}
+.descent-copy h2{font-size:clamp(34px,4.15vw,60px)}
+.encounter-copy{max-width:700px;padding:24px 28px 27px}
+.encounter-copy h2{max-width:620px;font-size:clamp(32px,3.65vw,54px);margin-bottom:20px}
+.encounter-copy>p:not(.eyebrow){max-width:540px;font-size:16px;line-height:1.58}
+.coral-intro{width:min(350px,32vw);padding:22px}
+.coral-intro h2{font-size:clamp(32px,3.75vw,54px)}
+.coral-intro>p:last-child{font-size:14px;line-height:1.48}
+.world-copy{width:min(390px,36vw);padding:23px 25px}
+.world-copy h2,.twilight-task h2{font-size:clamp(30px,3.35vw,48px)}
+.world-copy>p:last-of-type,.twilight-task li{font-size:14px!important;line-height:1.45!important}
+.twilight-task{width:min(430px,38vw)}
+.vent-task{width:min(370px,33vw)}
+
+@media(max-width:820px){
+  .hero-copy{width:66vw}
+  .hero-copy h1{font-size:clamp(32px,7.7vw,44px)}
+  .hero-copy .lead{font-size:14px;line-height:1.42}
+  .descent-copy{width:68vw}
+  .descent-copy h2{font-size:clamp(31px,7.5vw,44px)}
+  .encounter-copy h2,.world-copy h2,.twilight-task h2{font-size:clamp(29px,6.8vw,38px)}
+  .encounter-copy>p:not(.eyebrow){font-size:15px;line-height:1.5}
+  .coral-intro{width:56vw;padding:18px}
+  .coral-intro h2{font-size:clamp(30px,6.9vw,40px)}
+.world-copy,.twilight-task{width:70vw;padding:18px 20px}
+  .vent-task{width:61vw}
+}
+
+@media(min-width:821px){
+  .coral-intro{left:3.5%;top:18%;width:min(300px,26vw);padding:18px 20px;background:linear-gradient(90deg,rgba(255,239,227,.8),rgba(255,239,227,.025))}
+  .coral-intro h2{font-size:clamp(28px,3vw,43px)}
+  .world-copy{left:3.5%;top:19%;width:min(340px,29vw);padding:19px 21px;background:linear-gradient(90deg,rgba(24,10,36,.76),rgba(24,10,36,.08) 78%,transparent)}
+  .world-copy h2,.twilight-task h2{font-size:clamp(27px,2.9vw,41px)}
+  .world-copy .eyebrow,.coral-intro .eyebrow{margin-bottom:11px;font-size:10px}
+  .world-copy>p:last-of-type,.coral-intro>p:last-child{margin-top:13px;font-size:13px!important;line-height:1.42!important}
+  .twilight-task{width:min(370px,31vw);padding:18px 20px}
+  .twilight-task ol{gap:5px;margin-top:11px;padding-left:18px}
+  .twilight-task li{font-size:13px!important;line-height:1.32!important}
+  .twilight-task>button{min-height:44px;margin-top:8px;font-size:10px!important}
+  .vent-task{width:min(320px,27vw)}
+  .trail-progress{margin-top:12px}
+}
+
+/* Della Respira is an accent, not a wall of type. Josefin Sans stays comfortably readable. */
+.hero-copy h1{font-size:clamp(34px,3.65vw,54px)}
+.descent-copy h2{font-size:clamp(31px,3.6vw,52px)}
+.encounter-copy h2{font-size:clamp(29px,3.15vw,46px)}
+.conclusion>h2{font-size:clamp(36px,4.1vw,58px)}
+.guided-studio>.studio-copy h3{font-size:clamp(34px,3.8vw,54px)}
+@media(min-width:821px){
+  .coral-intro h2{font-size:clamp(25px,2.55vw,37px)}
+  .world-copy h2,.twilight-task h2{font-size:clamp(25px,2.5vw,36px)}
+  .world-copy>p:last-of-type,.coral-intro>p:last-child{font-size:15px!important;line-height:1.5!important}
+  .twilight-task li{font-size:14px!important;line-height:1.4!important}
+}
+@media(max-width:820px){
+  .hero-copy h1{font-size:clamp(30px,7vw,40px)}
+  .descent-copy h2{font-size:clamp(29px,6.8vw,40px)}
+  .encounter-copy h2,.world-copy h2,.twilight-task h2{font-size:clamp(27px,6vw,35px)}
+  .coral-intro h2{font-size:clamp(27px,6.1vw,36px)}
+}
+
+/* Living fauna: fish cruise independently; deep-water jellies startle at movement. */
+.fish-layer{animation:mid-plane-forward 145s linear 1 both,fish-school-live 8.5s ease-in-out infinite alternate!important}
+.fish-layer.scatter{animation-duration:145s,2.8s!important}
+@keyframes fish-school-live{
+  0%{margin-left:-2.2%;margin-top:.8%;rotate:-.35deg}
+  45%{margin-left:1.2%;margin-top:-.6%;rotate:.2deg}
+  100%{margin-left:3.8%;margin-top:.35%;rotate:-.15deg}
+}
+.descent-life>i{transition:margin .38s cubic-bezier(.2,.9,.3,1),filter .3s,opacity .3s}
+.descent-life.agitated>i{animation:jelly-startle .72s cubic-bezier(.2,.9,.3,1) infinite alternate;filter:brightness(1.45) drop-shadow(0 0 8px rgba(126,232,240,.7))}
+.descent-life.agitated>i:nth-child(3n+1){--jelly-x:-28px;--jelly-y:-18px}
+.descent-life.agitated>i:nth-child(3n+2){--jelly-x:31px;--jelly-y:-9px}
+.descent-life.agitated>i:nth-child(3n){--jelly-x:18px;--jelly-y:24px}
+@keyframes jelly-startle{
+  from{transform:translate3d(0,0,0) rotate(-2deg);opacity:.7}
+  to{transform:translate3d(var(--jelly-x),var(--jelly-y),0) rotate(7deg);opacity:1}
+}
+
 /* Exploration 3 is a spatial trail, not a metaphorical button. */
 .vent-task{top:16%;width:min(430px,38vw)}.trail-progress{display:flex;gap:10px;align-items:baseline;margin-top:18px;color:#d9cde1;font-size:12px;letter-spacing:.08em;text-transform:uppercase}.trail-progress span{color:#f1d36b;font-family:var(--font-della),serif;font-size:25px;letter-spacing:0}.vent-trail{position:absolute;z-index:7;inset:10% 3% 4% 38%;pointer-events:none}.vent-trail svg{position:absolute;inset:0;width:100%;height:100%;overflow:visible}.vent-trail path{fill:none;stroke:rgba(255,238,187,.62);stroke-width:.65;stroke-dasharray:2.2 2.4;filter:drop-shadow(0 0 5px rgba(241,211,107,.7));animation:trail-flow 5s linear infinite}.vent-trail button{position:absolute;display:grid;grid-template-columns:38px auto;gap:9px;align-items:center;transform:translate(-50%,-50%);padding:8px 13px 8px 8px;border:1px solid rgba(255,242,204,.55);border-radius:999px;background:rgba(29,22,49,.84);color:#fff5e9;font:700 11px var(--font-josefin),sans-serif;letter-spacing:.06em;text-transform:uppercase;pointer-events:auto;cursor:pointer;backdrop-filter:blur(8px);transition:opacity .35s,filter .35s,transform .35s}.vent-trail button i{display:grid;place-items:center;width:38px;height:38px;border-radius:50%;background:#f1d36b;color:#392740;font-family:var(--font-della),serif;font-size:17px;font-style:normal;box-shadow:0 0 18px rgba(241,211,107,.75)}.vent-trail button.active{animation:trail-node 2s ease-in-out infinite}.vent-trail button.complete{background:rgba(69,46,71,.56);opacity:.58}.vent-trail button:disabled:not(.complete){opacity:.2;cursor:default}.vent-creature{transition:left 1.5s cubic-bezier(.16,.8,.23,1),top 1.5s cubic-bezier(.16,.8,.23,1)!important}.vent-world .creature-insight{z-index:12}
 @keyframes trail-flow{to{stroke-dashoffset:-18}}
