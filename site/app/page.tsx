@@ -67,6 +67,7 @@ export function Experience({ language }: { language: 'en' | 'de' | 'fr' }) {
   const [scrollProgress, setScrollProgress] = useState(0);
   const [movement, setMovement] = useState(0);
   const [guideDragging, setGuideDragging] = useState(false);
+  const guideDraggingRef = useRef(false);
   const [stillness, setStillness] = useState(0);
   const [isStill, setIsStill] = useState(false);
   const [soundCaption, setSoundCaption] = useState('');
@@ -167,14 +168,17 @@ export function Experience({ language }: { language: 'en' | 'de' | 'fr' }) {
     setPointer({ x:(event.clientX/window.innerWidth-.5)*2, y:(event.clientY/window.innerHeight-.5)*2 });
   };
   const startGuideTouch = (event: React.PointerEvent<HTMLElement>) => {
-    if(event.pointerType!=='touch') return;
-    event.currentTarget.setPointerCapture(event.pointerId); setGuideDragging(true); moveGuideByTouch(event);
+    if(event.pointerType!=='touch'&&event.pointerType!=='pen') return;
+    event.preventDefault(); event.stopPropagation();
+    guideDraggingRef.current=true; setGuideDragging(true);
+    try{event.currentTarget.setPointerCapture(event.pointerId)}catch{}
+    moveGuideByTouch(event);
   };
-  const dragGuideTouch = (event: React.PointerEvent<HTMLElement>) => { if(guideDragging&&event.pointerType==='touch') moveGuideByTouch(event); };
+  const dragGuideTouch = (event: React.PointerEvent<HTMLElement>) => { if(guideDraggingRef.current&&(event.pointerType==='touch'||event.pointerType==='pen')) moveGuideByTouch(event); };
   const stopGuideTouch = (event: React.PointerEvent<HTMLElement>) => {
-    if(event.pointerType!=='touch') return;
-    if(event.currentTarget.hasPointerCapture(event.pointerId)) event.currentTarget.releasePointerCapture(event.pointerId);
-    setGuideDragging(false);
+    if(event.pointerType!=='touch'&&event.pointerType!=='pen') return;
+    guideDraggingRef.current=false; setGuideDragging(false);
+    try{if(event.currentTarget.hasPointerCapture(event.pointerId)) event.currentTarget.releasePointerCapture(event.pointerId)}catch{}
   };
 
   const toggleSound = async () => {
@@ -321,7 +325,7 @@ export function Experience({ language }: { language: 'en' | 'de' | 'fr' }) {
         <button className="descend" type="button" onClick={beginJourney}><span>{t('Begin the investigation','Untersuchung beginnen')}</span><ArrowDown size={18}/></button>
       </section>}
 
-      {!expeditionComplete && !coralWorld && !twilightWorld && !ventWorld && <div className={`creature-guide ${movement > .52 ? 'is-wary' : ''} ${isStill ? 'is-near' : ''} ${guideDragging?'is-touch-dragging':''}`} onPointerDown={startGuideTouch} onPointerMove={dragGuideTouch} onPointerUp={stopGuideTouch} onPointerCancel={stopGuideTouch} style={{ left:`${creatureLeft}%`, top:`${creatureTop}%`, transform:`translate(-50%,-50%) scale(${creatureScale}) rotate(${pointer.x * 4}deg)` }}>
+      {!expeditionComplete && !coralWorld && !twilightWorld && !ventWorld && <div className={`creature-guide ${movement > .52 ? 'is-wary' : ''} ${isStill ? 'is-near' : ''} ${guideDragging?'is-touch-dragging':''}`} onPointerDown={startGuideTouch} onPointerMove={dragGuideTouch} onPointerUp={stopGuideTouch} onPointerCancel={stopGuideTouch} onLostPointerCapture={stopGuideTouch} style={{ left:`${creatureLeft}%`, top:`${creatureTop}%`, transform:`translate(-50%,-50%) scale(${creatureScale}) rotate(${pointer.x * 4}deg)` }}>
         <div className="creature-glow" style={{ opacity:.35 + stillness * .65 }} aria-hidden="true"/><img className="creature" src="./elios-wesen.png" alt="Elio’s orange-and-blue drawing of an imaginary creature" draggable="false"/>
         <div className="creature-signals" aria-hidden="true"><i/><i/><i/></div>
       </div>}
@@ -386,7 +390,7 @@ export function Experience({ language }: { language: 'en' | 'de' | 'fr' }) {
         <div className="coral-light" aria-hidden="true"/>
         <header><div><small>{t('Secret habitat','Verborgener Lebensraum')} / 01</small><strong>{t('Beneath the coral','Unter der Koralle')}</strong></div><button type="button" onClick={()=>{setCoralWorld(false);setActiveCoralFinding(null)}} aria-label={t('Return to the open ocean','Zurück in den offenen Ozean')}>{t('Return to the open ocean','Zurück in den Ozean')} ×</button></header>
         <div className="coral-intro"><p className="eyebrow">{t('Chapter 1 · A place to live','Kapitel 1 · Ein Ort zum Leben')}</p><h2>{t('No animal lives','Kein Tier lebt')}<br/>{t('on its own.','für sich allein.')}</h2><p>{t('Follow Elio’s creature into the coral. Could this place protect and feed it?','Folge Elios Wesen in die Koralle. Könnte dieser Ort es schützen und ernähren?')}</p></div>
-        <img className="coral-creature" src="./elios-wesen.png" alt="Elio’s creature exploring beneath the coral" draggable="false" onPointerDown={startGuideTouch} onPointerMove={dragGuideTouch} onPointerUp={stopGuideTouch} onPointerCancel={stopGuideTouch} style={{left:`${(activeCoralFinding==='shelter'?26:activeCoralFinding==='community'?72:activeCoralFinding==='feeding'?68:50)+pointer.x*13}%`,top:`${(activeCoralFinding==='shelter'?66:activeCoralFinding==='community'?35:activeCoralFinding==='feeding'?68:50)+pointer.y*11}%`,transform:`translate(-50%,-50%) rotate(${pointer.x*4}deg)`}}/>
+        <img className={`coral-creature ${guideDragging?'is-touch-dragging':''}`} src="./elios-wesen.png" alt="Elio’s creature exploring beneath the coral" draggable="false" onPointerDown={startGuideTouch} onPointerMove={dragGuideTouch} onPointerUp={stopGuideTouch} onPointerCancel={stopGuideTouch} onLostPointerCapture={stopGuideTouch} style={{left:`${guideDragging?50+pointer.x*44:(activeCoralFinding==='shelter'?26:activeCoralFinding==='community'?72:activeCoralFinding==='feeding'?68:50)+pointer.x*13}%`,top:`${guideDragging?50+pointer.y*38:(activeCoralFinding==='shelter'?66:activeCoralFinding==='community'?35:activeCoralFinding==='feeding'?68:50)+pointer.y*11}%`,transform:`translate(-50%,-50%) rotate(${pointer.x*4}deg)`}}/>
         <button className="coral-hotspot community" type="button" onClick={()=>discoverCoral('community')} aria-label={t('Follow the creature into shelter','Dem Wesen ins Versteck folgen')}><i/><span>{t('Follow into shelter','Ins Versteck folgen')}</span></button>
         {activeCoralFinding && <aside className="coral-discovery" aria-live="polite"><small>{t('Elio’s creature discovered','Das hat Elios Wesen entdeckt')}</small><h3>{t('A habitat is a network.','Ein Lebensraum ist ein Netzwerk.')}</h3><p>{t('Coral branches protect small animals from predators and slow the current. The current carries plankton past the shelter. Elio’s creature would therefore depend on the coral, the current and other living beings.','Korallenäste schützen kleine Tiere vor Räubern und bremsen die Strömung. Diese trägt Plankton am Versteck vorbei. Elios Wesen wäre deshalb auf die Koralle, die Strömung und andere Lebewesen angewiesen.')}</p><button className="next-station" type="button" onClick={continueToTwilight}>{t('Continue exploring','Weiter erkunden')} <span>→</span></button></aside>}
         {!coralFindings.length&&<div className="coral-instruction"><small>{t('Follow the glowing signal.','Folge dem leuchtenden Signal.')}</small></div>}
@@ -395,7 +399,7 @@ export function Experience({ language }: { language: 'en' | 'de' | 'fr' }) {
         <div className="world-background"/>
         <header><div><small>02 / {t('Exploration','Erkundung')}</small><strong>{t('The twilight zone','Die Dämmerzone')}</strong></div><button type="button" onClick={()=>setTwilightWorld(false)}>{t('Pause expedition','Expedition verlassen')} ×</button></header>
         <div className="world-copy twilight-task"><p className="eyebrow">{t('Exploration 2 · Light','Erkundung 2 · Licht')}</p><h2>{t('What appears when light fades?','Was wird sichtbar, wenn das Licht schwindet?')}</h2><p>{t('Start — then remain still for four seconds.','Starte – und bleib dann vier Sekunden still.')}</p>{!twilightExperimentStarted?<button type="button" onClick={startTwilightExperiment}>{t('Start stillness experiment','Stillstand-Versuch starten')}</button>:<div className="world-stillness"><i style={{width:`${stillness*100}%`}}/><span>{stillness>.05?t('Keep still …','Bleib still …'):t('Movement detected — stop again','Bewegung erkannt – halte erneut still')}</span></div>}</div>
-        <img className="world-creature" src="./elios-wesen.png" alt="" draggable="false" onPointerDown={startGuideTouch} onPointerMove={dragGuideTouch} onPointerUp={stopGuideTouch} onPointerCancel={stopGuideTouch} style={{left:`${50+pointer.x*30}%`,top:`${52+pointer.y*24}%`}}/>
+        <img className={`world-creature ${guideDragging?'is-touch-dragging':''}`} src="./elios-wesen.png" alt="" draggable="false" onPointerDown={startGuideTouch} onPointerMove={dragGuideTouch} onPointerUp={stopGuideTouch} onPointerCancel={stopGuideTouch} onLostPointerCapture={stopGuideTouch} style={{left:`${50+pointer.x*(guideDragging?45:30)}%`,top:`${52+pointer.y*(guideDragging?38:24)}%`}}/>
         {twilightInsight&&<aside className="creature-insight"><small>{t('What the experiment shows','Das zeigt der Versuch')}</small><h3>{t('Darkness can also be an advantage.','Dunkelheit kann auch ein Vorteil sein.')}</h3><p>{t('With less light, animals are harder to see. They may sense the tiny water movements of nearby animals — or send blue flashes to attract prey, warn others or communicate. Elio’s blue lines could do either.','Bei wenig Licht sind Tiere schwerer zu sehen. Sie können feinste Wasserbewegungen anderer Tiere spüren – oder blaue Lichtblitze senden, um Beute anzulocken, andere zu warnen oder miteinander zu kommunizieren. Elios blaue Linien könnten beides tun.')}</p><button className="next-station" type="button" onClick={continueToVent}>{t('Continue exploring','Weiter erkunden')} <span>→</span></button></aside>}
       </section>}
       {ventWorld && <section className="hidden-world vent-world" aria-label={t('A hydrothermal vent ecosystem','Ein Ökosystem an einer Tiefseequelle')}>
@@ -406,7 +410,7 @@ export function Experience({ language }: { language: 'en' | 'de' | 'fr' }) {
           <svg viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true"><path d="M48 20 C 69 25, 72 38, 63 48 S 72 66, 78 79"/></svg>
           {[{x:48,y:20,en:'Mineral cloud',de:'Heiße Quelle'},{x:63,y:48,en:'Sulfur compounds',de:'Schwefelverbindungen'},{x:78,y:79,en:'Bacteria',de:'Bakterien'}].map((point,index)=><button key={point.en} type="button" className={`${index===ventStep?'active':''} ${index<ventStep?'complete':''}`} style={{left:`${point.x}%`,top:`${point.y}%`}} disabled={index>ventStep} onClick={()=>followVentTrail(index)}><i>{index<ventStep?'✓':index+1}</i><span>{t(point.en,point.de)}</span></button>)}
         </div>
-        <img className="world-creature vent-creature" src="./elios-wesen.png" alt="" draggable="false" onPointerDown={startGuideTouch} onPointerMove={dragGuideTouch} onPointerUp={stopGuideTouch} onPointerCancel={stopGuideTouch} style={{left:`${(ventStep?[68,68,76,84][ventStep]:50)+pointer.x*(ventStep?12:30)}%`,top:`${(ventStep?[42,29,52,73][ventStep]:52)+pointer.y*(ventStep?10:24)}%`}}/>
+        <img className={`world-creature vent-creature ${guideDragging?'is-touch-dragging':''}`} src="./elios-wesen.png" alt="" draggable="false" onPointerDown={startGuideTouch} onPointerMove={dragGuideTouch} onPointerUp={stopGuideTouch} onPointerCancel={stopGuideTouch} onLostPointerCapture={stopGuideTouch} style={{left:`${guideDragging?50+pointer.x*44:(ventStep?[68,68,76,84][ventStep]:50)+pointer.x*(ventStep?12:30)}%`,top:`${guideDragging?50+pointer.y*38:(ventStep?[42,29,52,73][ventStep]:52)+pointer.y*(ventStep?10:24)}%`}}/>
         {ventInsight&&<aside className="creature-insight"><small>{t('The path revealed','Der Weg hat gezeigt')}</small><h3>{t('Life can begin without sunlight.','Leben kann ohne Sonnenlicht beginnen.')}</h3><p>{t('Sunlight never reaches this depth, so plants cannot make food here. Instead, bacteria use sulfur compounds from the vent as energy. Snails and shrimp graze on the bacteria; fish and crabs eat those animals.','In diese Tiefe gelangt kein Sonnenlicht. Pflanzen können hier keine Nahrung herstellen. Stattdessen nutzen Bakterien Schwefelverbindungen aus der Quelle als Energie. Schnecken und Garnelen fressen die Bakterien; Fische und Krebse fressen wiederum diese Tiere.')}</p><button className="next-station" type="button" onClick={finishExpedition}>{t('Now test Elio’s creature','Jetzt Elios Wesen prüfen')} <span>→</span></button></aside>}
       </section>}
     </main>
