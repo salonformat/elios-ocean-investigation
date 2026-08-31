@@ -1,0 +1,12 @@
+.DS_Store
+tmp/
+site/node_modules/
+site/dist/
+site/.next/
+site/.vinext/
+site/.wrangler/
+site/tsconfig.tsbuildinfo
+site/next-env.d.ts
+*.log
+.env*
+
