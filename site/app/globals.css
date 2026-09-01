@@ -1080,3 +1080,18 @@ button,.design-entry{font-family:var(--font-josefin),sans-serif;-webkit-tap-high
 .conclusion .credits-grid p,.conclusion .credits-grid li{font-size:14px!important;line-height:1.62!important}
 .conclusion .credits-grid a{color:#ffe37e!important;font-weight:700;text-decoration-thickness:1px}
 .conclusion .credits-grid a:hover{color:#fff4bd!important}
+
+/* A conclusion is completed, not merely selected. */
+.verdict-step .conclusion-choice{grid-template-columns:repeat(3,minmax(0,1fr))!important}
+.verdict-step .conclusion-choice button{min-width:0;overflow-wrap:anywhere;line-height:1.25!important}
+.verdict-step .conclusion-reason{padding:18px;border-left:4px solid #c84f59;background:#fff6e9;color:#34243b}
+.verdict-step .conclusion-reason span{display:flex;flex-wrap:wrap;gap:7px 12px;align-items:baseline}
+.verdict-step .conclusion-reason small{color:#9b4051;font:700 10px var(--font-josefin),sans-serif;letter-spacing:.1em;text-transform:uppercase}
+.verdict-step .conclusion-reason strong{font-family:var(--font-della),serif;font-size:22px;font-weight:400}
+.verdict-step .conclusion-reason em{color:#675568;font-size:13px;font-style:normal;line-height:1.45}
+.verdict-step .conclusion-reason textarea{width:100%;min-height:96px;margin-top:2px;background:#fffdf8!important;color:#34243b!important;font-size:17px!important;line-height:1.45}
+@media(max-width:820px){
+  .verdict-step .conclusion-choice{grid-template-columns:1fr!important}
+  .verdict-step .conclusion-choice button{min-height:50px!important;padding:11px 13px!important;text-align:left!important}
+  .verdict-step .conclusion-reason{padding:15px}
+}
