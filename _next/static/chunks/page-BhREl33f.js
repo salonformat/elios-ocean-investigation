@@ -1,1 +1,0 @@
-import{r as e}from"./framework-D_rUT4EX.js";import{Experience as t}from"./page-CE2GbZk8.js";var n=e();function r(){return(0,n.jsx)(t,{language:`en`})}export{r as default};
