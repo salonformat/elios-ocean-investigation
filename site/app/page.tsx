@@ -72,6 +72,7 @@ export function Experience({ language }: { language: 'en' | 'de' | 'fr' }) {
   const [movement, setMovement] = useState(0);
   const [guideDragging, setGuideDragging] = useState(false);
   const guideDraggingRef = useRef(false);
+  const guideCreatureRef = useRef<HTMLElement | null>(null);
   const [stillness, setStillness] = useState(0);
   const [isStill, setIsStill] = useState(false);
   const [soundCaption, setSoundCaption] = useState('');
@@ -174,7 +175,7 @@ export function Experience({ language }: { language: 'en' | 'de' | 'fr' }) {
     event.preventDefault(); event.stopPropagation();
     markActivity(.55);
     const next={ x:Math.max(-1,Math.min(1,(event.clientX/window.innerWidth-.5)*2)), y:Math.max(-1,Math.min(1,(event.clientY/window.innerHeight-.5)*2)) };
-    const element=event.currentTarget as HTMLElement;
+    const element=guideCreatureRef.current || event.currentTarget as HTMLElement;
     element.style.left=`${Math.max(8,Math.min(92,50+next.x*44))}%`;
     element.style.top=`${Math.max(12,Math.min(88,50+next.y*38))}%`;
     if(frame.current) cancelAnimationFrame(frame.current);
@@ -182,6 +183,7 @@ export function Experience({ language }: { language: 'en' | 'de' | 'fr' }) {
   };
   const startGuideTouch = (event: React.PointerEvent<HTMLElement>) => {
     if(event.pointerType!=='touch'&&event.pointerType!=='pen') return;
+    if((event.target as HTMLElement).closest('button,a,.coral-intro,.coral-discovery')) return;
     event.preventDefault(); event.stopPropagation();
     guideDraggingRef.current=true; setGuideDragging(true);
     try{event.currentTarget.setPointerCapture(event.pointerId)}catch{}
@@ -338,7 +340,7 @@ export function Experience({ language }: { language: 'en' | 'de' | 'fr' }) {
         <button className="descend" type="button" onClick={beginJourney}><span>{t('Begin the investigation','Untersuchung beginnen')}</span><ArrowDown size={18}/></button>
       </section>}
 
-      {!expeditionComplete && !coralWorld && !twilightWorld && !ventWorld && <div className={`creature-guide ${movement > .52 ? 'is-wary' : ''} ${isStill ? 'is-near' : ''} ${guideDragging?'is-touch-dragging':''}`} onPointerDown={startGuideTouch} onPointerMove={dragGuideTouch} onPointerUp={stopGuideTouch} onPointerCancel={stopGuideTouch} onLostPointerCapture={stopGuideTouch} style={{ left:`${creatureLeft}%`, top:`${creatureTop}%`, transform:`translate(-50%,-50%) scale(${creatureScale}) rotate(${pointer.x * 4}deg)` }}>
+      {!expeditionComplete && !coralWorld && !twilightWorld && !ventWorld && <div ref={element=>{guideCreatureRef.current=element}} className={`creature-guide ${movement > .52 ? 'is-wary' : ''} ${isStill ? 'is-near' : ''} ${guideDragging?'is-touch-dragging':''}`} onPointerDown={startGuideTouch} onPointerMove={dragGuideTouch} onPointerUp={stopGuideTouch} onPointerCancel={stopGuideTouch} onLostPointerCapture={stopGuideTouch} style={{ left:`${creatureLeft}%`, top:`${creatureTop}%`, transform:`translate(-50%,-50%) scale(${creatureScale}) rotate(${pointer.x * 4}deg)` }}>
         <div className="creature-glow" style={{ opacity:.35 + stillness * .65 }} aria-hidden="true"/><img className="creature" src={asset('elios-wesen.png')} alt="Elio’s orange-and-blue drawing of an imaginary creature" draggable="false"/>
         <div className="creature-signals" aria-hidden="true"><i/><i/><i/></div>
       </div>}
@@ -397,12 +399,12 @@ export function Experience({ language }: { language: 'en' | 'de' | 'fr' }) {
           </footer>
         </section>
       </section>}
-      {coralWorld && <section className="coral-world" aria-label="A hidden habitat beneath the coral">
+      {coralWorld && <section className={`coral-world ${guideDragging?'is-guiding-creature':''}`} aria-label="A hidden habitat beneath the coral" onPointerDown={startGuideTouch} onPointerMove={dragGuideTouch} onPointerUp={stopGuideTouch} onPointerCancel={stopGuideTouch} onLostPointerCapture={stopGuideTouch}>
         <div className="coral-backdrop" aria-hidden="true"/>
         <div className="coral-light" aria-hidden="true"/>
         <header><div><small>{t('Secret habitat','Verborgener Lebensraum')} / 01</small><strong>{t('Beneath the coral','Unter der Koralle')}</strong></div><button type="button" onClick={()=>{setCoralWorld(false);setActiveCoralFinding(null)}} aria-label={t('Return to the open ocean','Zurück in den offenen Ozean')}>{t('Return to the open ocean','Zurück in den Ozean')} ×</button></header>
         <div className="coral-intro"><p className="eyebrow">{t('Chapter 1 · A place to live','Kapitel 1 · Ein Ort zum Leben')}</p><h2>{t('No animal lives','Kein Tier lebt')}<br/>{t('on its own.','für sich allein.')}</h2><p>{t('Follow Elio’s creature into the coral. Could this place protect and feed it?','Folge Elios Wesen in die Koralle. Könnte dieser Ort es schützen und ernähren?')}</p></div>
-        <img className={`coral-creature ${guideDragging?'is-touch-dragging':''}`} src={asset('elios-wesen.png')} alt="Elio’s creature exploring beneath the coral" draggable="false" onPointerDown={startGuideTouch} onPointerMove={dragGuideTouch} onPointerUp={stopGuideTouch} onPointerCancel={stopGuideTouch} onLostPointerCapture={stopGuideTouch} style={{left:`${guideDragging?50+pointer.x*44:(activeCoralFinding==='shelter'?26:activeCoralFinding==='community'?72:activeCoralFinding==='feeding'?68:50)+pointer.x*13}%`,top:`${guideDragging?50+pointer.y*38:(activeCoralFinding==='shelter'?66:activeCoralFinding==='community'?35:activeCoralFinding==='feeding'?68:50)+pointer.y*11}%`,transform:`translate(-50%,-50%) rotate(${pointer.x*4}deg)`}}/>
+        <img ref={element=>{guideCreatureRef.current=element}} className={`coral-creature ${guideDragging?'is-touch-dragging':''}`} src={asset('elios-wesen.png')} alt="Elio’s creature exploring beneath the coral" draggable="false" style={{left:`${guideDragging?50+pointer.x*44:(activeCoralFinding==='shelter'?26:activeCoralFinding==='community'?72:activeCoralFinding==='feeding'?68:50)+pointer.x*13}%`,top:`${guideDragging?50+pointer.y*38:(activeCoralFinding==='shelter'?66:activeCoralFinding==='community'?35:activeCoralFinding==='feeding'?68:50)+pointer.y*11}%`,transform:`translate(-50%,-50%) rotate(${pointer.x*4}deg)`}}/>
         <button className="coral-hotspot community" type="button" onClick={()=>discoverCoral('community')} aria-label={t('Follow the creature into shelter','Dem Wesen ins Versteck folgen')}><i/><span>{t('Follow into shelter','Ins Versteck folgen')}</span></button>
         {activeCoralFinding && <aside className="coral-discovery" aria-live="polite"><small>{t('Elio’s creature discovered','Das hat Elios Wesen entdeckt')}</small><h3>{t('A habitat is a network.','Ein Lebensraum ist ein Netzwerk.')}</h3><p>{t('Coral branches protect small animals from predators and slow the current. The current carries plankton past the shelter. Elio’s creature would therefore depend on the coral, the current and other living beings.','Korallenäste schützen kleine Tiere vor Räubern und bremsen die Strömung. Diese trägt Plankton am Versteck vorbei. Elios Wesen wäre deshalb auf die Koralle, die Strömung und andere Lebewesen angewiesen.')}</p><button className="next-station" type="button" onClick={continueToTwilight}>{t('Continue exploring','Weiter erkunden')} <span>→</span></button></aside>}
         {!coralFindings.length&&<div className="coral-instruction"><small>{t('Follow the glowing signal.','Folge dem leuchtenden Signal.')}</small></div>}
