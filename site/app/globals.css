@@ -1054,7 +1054,8 @@ button,.design-entry{font-family:var(--font-josefin),sans-serif;-webkit-tap-high
   .coral-intro>p:last-child{max-width:100%!important;margin-top:9px!important;font-size:12px!important;line-height:1.38!important}
   .coral-hotspot.community{top:auto!important;right:auto!important;bottom:24px!important;left:50%!important;transform:translateX(-50%)!important;min-width:190px!important}
   .coral-hotspot.community:hover{transform:translateX(-50%) translateY(-2px)!important}
-  .coral-creature{top:57%!important}
+  /* Starting position only: inline touch coordinates must remain free to move vertically. */
+  .coral-creature{top:57%}
   .coral-world{touch-action:none}
   .coral-world .coral-intro,.coral-world .coral-hotspot,.coral-world .coral-discovery,.coral-world header{touch-action:auto}
   .coral-world.is-guiding-creature{cursor:grabbing}
