@@ -335,7 +335,7 @@ export function Experience({ language }: { language: 'en' | 'de' | 'fr' }) {
       <p className="copyright-mark">© 2026 Isabella Kohout / Salonformat</p>
       {(journeyStarted||expeditionComplete)&&<button className="experience-back" type="button" onClick={goBackOneStage}>← {t('Back','Zurück')}</button>}
       {journeyStarted&&<button className="restart-experience" type="button" onClick={restartJourney}>{t('Back to start','Zum Anfang')}</button>}
-      <a className="portfolio-return" href="https://isabellakohout.eu/">← {t('See all projects','Alle Projekte')}</a>
+      <a className="portfolio-return" href="https://salonformat.github.io/salon-format-portfolio/">← {t('See all projects','Alle Projekte')}</a>
       {!journeyStarted && <section className="ocean-stage" aria-labelledby="hero-title">
         <div className="collage-layer collage-surface" aria-hidden="true" />
         <div className="ocean-image" aria-hidden="true" style={{ transform: `scale(1.08) translate3d(${environmentPointer.x * -7}px, ${environmentPointer.y * -5}px, 0)`, filter: `brightness(${1 - scrollProgress * .5}) saturate(${1 - scrollProgress * .35})` }} />
