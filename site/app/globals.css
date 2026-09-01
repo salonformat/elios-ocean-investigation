@@ -955,3 +955,71 @@ button,.design-entry{font-family:var(--font-josefin),sans-serif;-webkit-tap-high
     cursor:grabbing!important;
   }
 }
+
+/* Mobile finale: preserve every learning decision without a very long vertical page. */
+@media(max-width:820px){
+  .conclusion{padding-top:38px!important;padding-bottom:52px!important}
+  .synthesis-intro{margin-top:22px!important;padding:16px!important;gap:10px!important}
+  .direct-create{margin-top:16px!important;margin-bottom:22px!important}
+  .drawing-evidence{margin-top:18px!important}
+  .evidence-clues{
+    display:flex!important;
+    gap:12px!important;
+    width:calc(100vw - 24px)!important;
+    max-width:none!important;
+    margin-left:-8px!important;
+    padding:2px 8vw 14px 8px!important;
+    overflow-x:auto!important;
+    overflow-y:hidden!important;
+    scroll-snap-type:x mandatory;
+    scrollbar-width:none;
+    overscroll-behavior-inline:contain;
+  }
+  .evidence-clues::-webkit-scrollbar{display:none}
+  .evidence-clues article{
+    flex:0 0 min(82vw,330px)!important;
+    min-height:0!important;
+    padding:18px!important;
+    scroll-snap-align:start;
+  }
+  .evidence-clues article h3{font-size:23px!important}
+  .evidence-clues article>p{font-size:13px!important;line-height:1.42!important}
+  .evidence-choice{grid-template-columns:1fr 1fr!important;gap:7px!important;margin-top:12px!important}
+  .evidence-choice button{min-height:42px!important;padding:8px!important;font-size:11px!important}
+  .evidence-progress{margin:10px 0 0!important;font-size:12px!important}
+  .guided-step{margin-top:24px!important;padding:16px!important;gap:8px!important}
+  .guided-step .conclusion-choice{grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:6px!important;margin-top:15px!important}
+  .guided-step .conclusion-choice button{min-height:62px!important;padding:9px!important;font-size:14px!important;line-height:1.18!important;text-align:center!important}
+  .guided-studio{margin-top:28px!important;padding-top:24px!important}
+  .survival-plan{grid-template-columns:repeat(3,minmax(0,1fr))!important;margin-top:18px!important}
+  .survival-plan header{grid-column:1/-1;padding:12px 14px!important}
+  .survival-plan article{display:grid!important;grid-template-columns:1fr!important;gap:5px!important;padding:10px!important;text-align:center}
+  .survival-plan article>span{margin:auto}.survival-plan article p{display:none}
+  .design-lab-layout{gap:12px!important;margin-top:18px!important}
+  .drawing-board{margin-top:0!important}
+  .creature-builder{gap:8px!important}
+  .design-lab-layout .builder-question{padding:12px!important}
+  .design-lab-layout .builder-question>div{grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:5px!important}
+  .design-lab-layout .builder-question button{min-height:54px!important;padding:6px 4px!important;font-size:10px!important;line-height:1.2!important}
+  .ocean-fit{margin-top:12px!important;padding:14px!important}
+  .learning-reflection{margin-top:12px!important;padding:14px!important}
+}
+
+/* Every language receives the same luminous invitation to begin. */
+.ocean-stage .descend{
+  background:linear-gradient(115deg,#f6dc76,#f2a3bd)!important;
+  color:#33243c!important;
+  border-color:rgba(255,250,211,.96)!important;
+  box-shadow:0 16px 48px rgba(0,20,32,.42),0 0 30px rgba(246,220,118,.72),0 0 62px rgba(242,163,189,.38)!important;
+}
+.coral-entry-portal{
+  filter:brightness(1.2) saturate(1.16)!important;
+  border-color:#fff9cf!important;
+  background:linear-gradient(125deg,rgba(180,75,116,.98),rgba(22,130,137,.98))!important;
+  box-shadow:0 22px 62px rgba(0,8,18,.52),0 0 38px rgba(255,244,167,.98),0 0 94px rgba(242,163,189,.78),inset 0 0 34px rgba(255,255,220,.26)!important;
+}
+.coral-entry-portal::before{inset:-30px!important;opacity:1!important;filter:blur(5px)!important}
+@media(max-width:820px){
+  .ocean-stage .descend{box-shadow:0 14px 42px rgba(0,20,32,.42),0 0 28px rgba(246,220,118,.82),0 0 55px rgba(242,163,189,.46)!important}
+  .coral-entry-portal{filter:brightness(1.28) saturate(1.2)!important;box-shadow:0 18px 52px rgba(0,8,18,.5),0 0 42px rgba(255,244,167,1),0 0 92px rgba(242,163,189,.88)!important}
+}
