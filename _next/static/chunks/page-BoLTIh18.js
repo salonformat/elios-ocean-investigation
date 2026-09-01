@@ -1,1 +1,0 @@
-import{r as e}from"./framework-D_rUT4EX.js";import{Experience as t}from"./page-DOsyDOO-.js";var n=e();function r(){return(0,n.jsx)(t,{language:`fr`})}export{r as default};
