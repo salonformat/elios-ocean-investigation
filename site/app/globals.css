@@ -1062,3 +1062,21 @@ button,.design-entry{font-family:var(--font-josefin),sans-serif;-webkit-tap-high
   .coral-world .coral-intro,.coral-world .coral-hotspot,.coral-world .coral-discovery,.coral-world header{touch-action:auto}
   .coral-world.is-guiding-creature{cursor:grabbing}
 }
+
+/* Evidence cards sit on a dark ocean field: keep every answer state readable. */
+.conclusion .evidence-clues article{color:#fff8ed!important;background:rgba(12,15,32,.9)!important}
+.conclusion .evidence-clues article>span{color:#f1d36b!important}
+.conclusion .evidence-clues article h3{color:#fff8ed!important;text-shadow:none!important}
+.conclusion .evidence-clues .evidence-choice button{background:rgba(255,248,239,.12)!important;border-color:rgba(255,248,239,.58)!important;color:#fffaf2!important;text-shadow:0 1px 5px rgba(0,0,0,.45)}
+.conclusion .evidence-clues .evidence-choice button:hover{background:rgba(241,211,107,.24)!important;border-color:#f1d36b!important;color:#fff!important}
+.conclusion .evidence-clues .evidence-choice button.selected{background:#c84f59!important;border-color:#fff0c8!important;color:#fff!important;box-shadow:0 0 0 2px rgba(241,211,107,.3),inset 0 0 0 1px rgba(255,255,255,.3)!important}
+
+/* Sources and rights use paper ink outside, then high-contrast type inside each dark card. */
+.conclusion .project-credits{color:#34243b!important;border-top-color:rgba(52,36,59,.34)!important}
+.conclusion .project-credits>.eyebrow{color:#8d3648!important;text-shadow:none!important;font-weight:700}
+.conclusion .credits-grid{background:rgba(52,36,59,.3)!important}
+.conclusion .credits-grid section{background:#17182e!important;color:#fff8ed!important}
+.conclusion .credits-grid h3,.conclusion .credits-grid p,.conclusion .credits-grid li,.conclusion .credits-grid b,.conclusion .credits-grid strong{color:#fff8ed!important;text-shadow:none!important}
+.conclusion .credits-grid p,.conclusion .credits-grid li{font-size:14px!important;line-height:1.62!important}
+.conclusion .credits-grid a{color:#ffe37e!important;font-weight:700;text-decoration-thickness:1px}
+.conclusion .credits-grid a:hover{color:#fff4bd!important}
