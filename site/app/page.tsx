@@ -332,7 +332,7 @@ export function Experience({ language }: { language: 'en' | 'de' | 'fr' }) {
         <div className="creature-signals" aria-hidden="true"><i/><i/><i/></div>
       </div>}
 
-      {journeyStarted && !expeditionComplete && <section id="descent" className="descent-zone" aria-labelledby="descent-title">
+      {journeyStarted && !expeditionComplete && !coralWorld && !twilightWorld && !ventWorld && <section id="descent" className="descent-zone" aria-labelledby="descent-title">
         <div className="collage-layer collage-descent" aria-hidden="true" />
         <div className="layers layer-sun" style={{opacity:1-diveResponse*.72,transform:`translate3d(${pointer.x*-12}px,${pointer.y*-18}px,0)`}}/><div className="layers layer-mid" style={{opacity:.25+diveResponse*.7,transform:`translate3d(${pointer.x*16}px,${pointer.y*11}px,0)`}}/><div className="layers layer-deep" style={{opacity:.22+diveResponse*.72}}/>
         <div className="descent-reactive-dark" aria-hidden="true" style={{opacity:diveResponse*.58}}/>

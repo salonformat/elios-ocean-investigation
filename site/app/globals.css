@@ -1022,4 +1022,6 @@ button,.design-entry{font-family:var(--font-josefin),sans-serif;-webkit-tap-high
 @media(max-width:820px){
   .ocean-stage .descend{box-shadow:0 14px 42px rgba(0,20,32,.42),0 0 28px rgba(246,220,118,.82),0 0 55px rgba(242,163,189,.46)!important}
   .coral-entry-portal{filter:brightness(1.28) saturate(1.2)!important;box-shadow:0 18px 52px rgba(0,8,18,.5),0 0 42px rgba(255,244,167,1),0 0 92px rgba(242,163,189,.88)!important}
+  .restart-experience{left:auto!important;right:12px!important;top:12px!important;transform:none!important;min-height:34px!important;padding:8px 10px!important;font-size:8px!important}
+  .coral-world header button,.hidden-world header button{display:none!important}
 }
