@@ -1,0 +1,1 @@
+import{r as e}from"./framework-D_rUT4EX.js";import{Experience as t}from"./page-C7gl_Hpz.js";var n=e();function r(){return(0,n.jsx)(t,{language:`de`})}export{r as default};
