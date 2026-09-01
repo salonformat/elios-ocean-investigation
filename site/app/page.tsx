@@ -67,6 +67,7 @@ export function Experience({ language }: { language: 'en' | 'de' | 'fr' }) {
   const [paused, setPaused] = useState(false);
   const [muted, setMuted] = useState(true);
   const [pointer, setPointer] = useState({ x: 0, y: 0 });
+  const [environmentPointer, setEnvironmentPointer] = useState({ x: 0, y: 0 });
   const [scrollProgress, setScrollProgress] = useState(0);
   const [movement, setMovement] = useState(0);
   const [guideDragging, setGuideDragging] = useState(false);
@@ -155,6 +156,7 @@ export function Experience({ language }: { language: 'en' | 'de' | 'fr' }) {
   }, []);
 
   const followPointer = (event: React.PointerEvent<HTMLElement>) => {
+    if(event.pointerType==='touch'||event.pointerType==='pen') return;
     const now = performance.now();
     const dx = event.clientX - lastPointer.current.x; const dy = event.clientY - lastPointer.current.y;
     const elapsed = Math.max(16, now - lastPointer.current.time);
@@ -162,13 +164,21 @@ export function Experience({ language }: { language: 'en' | 'de' | 'fr' }) {
     lastPointer.current = { x: event.clientX, y: event.clientY, time: now };
     markActivity(speed);
     if (frame.current) cancelAnimationFrame(frame.current);
-    frame.current = requestAnimationFrame(() => setPointer({ x: (event.clientX / window.innerWidth - .5) * 2, y: (event.clientY / window.innerHeight - .5) * 2 }));
+    frame.current = requestAnimationFrame(() => {
+      const next={ x: (event.clientX / window.innerWidth - .5) * 2, y: (event.clientY / window.innerHeight - .5) * 2 };
+      setPointer(next); setEnvironmentPointer(next);
+    });
   };
 
   const moveGuideByTouch = (event: React.PointerEvent<HTMLElement>) => {
     event.preventDefault(); event.stopPropagation();
     markActivity(.55);
-    setPointer({ x:(event.clientX/window.innerWidth-.5)*2, y:(event.clientY/window.innerHeight-.5)*2 });
+    const next={ x:Math.max(-1,Math.min(1,(event.clientX/window.innerWidth-.5)*2)), y:Math.max(-1,Math.min(1,(event.clientY/window.innerHeight-.5)*2)) };
+    const element=event.currentTarget as HTMLElement;
+    element.style.left=`${Math.max(8,Math.min(92,50+next.x*44))}%`;
+    element.style.top=`${Math.max(12,Math.min(88,50+next.y*38))}%`;
+    if(frame.current) cancelAnimationFrame(frame.current);
+    frame.current=requestAnimationFrame(()=>setPointer(next));
   };
   const startGuideTouch = (event: React.PointerEvent<HTMLElement>) => {
     if(event.pointerType!=='touch'&&event.pointerType!=='pen') return;
@@ -312,11 +322,11 @@ export function Experience({ language }: { language: 'en' | 'de' | 'fr' }) {
       {journeyStarted&&<button className="restart-experience" type="button" onClick={restartJourney}>← {t('Back to start','Zum Anfang')}</button>}
       {!journeyStarted && <section className="ocean-stage" aria-labelledby="hero-title">
         <div className="collage-layer collage-surface" aria-hidden="true" />
-        <div className="ocean-image" aria-hidden="true" style={{ transform: `scale(1.08) translate3d(${pointer.x * -7}px, ${pointer.y * -5}px, 0)`, filter: `brightness(${1 - scrollProgress * .5}) saturate(${1 - scrollProgress * .35})` }} />
+        <div className="ocean-image" aria-hidden="true" style={{ transform: `scale(1.08) translate3d(${environmentPointer.x * -7}px, ${environmentPointer.y * -5}px, 0)`, filter: `brightness(${1 - scrollProgress * .5}) saturate(${1 - scrollProgress * .35})` }} />
         <div className="water-light" aria-hidden="true" style={{ opacity: Math.max(.08, .52 - scrollProgress * .44) }} /><div className="deep-haze" aria-hidden="true" />
-        <img className="fauna-layer" src={asset('fauna-background.png')} alt="" aria-hidden="true" style={{ transform:`translate3d(${pointer.x * -5}px,${pointer.y * -3}px,0) scale(1.04)` }}/>
-        <img className={`fish-layer ${movement > .5 ? 'scatter' : ''}`} src={asset('fish-midground.png')} alt="" aria-hidden="true" style={{ transform:`translate3d(${pointer.x * -18}px,${pointer.y * -10}px,0) scale(${movement > .5 ? .94 : 1})` }}/>
-        <img className="flora-layer" src={asset('flora-foreground.png')} alt="" aria-hidden="true" style={{ transform:`translate3d(${pointer.x * -28}px,${pointer.y * -7}px,0) scale(1.07)` }}/>
+        <img className="fauna-layer" src={asset('fauna-background.png')} alt="" aria-hidden="true" style={{ transform:`translate3d(${environmentPointer.x * -5}px,${environmentPointer.y * -3}px,0) scale(1.04)` }}/>
+        <img className={`fish-layer ${movement > .5 ? 'scatter' : ''}`} src={asset('fish-midground.png')} alt="" aria-hidden="true" style={{ transform:`translate3d(${environmentPointer.x * -18}px,${environmentPointer.y * -10}px,0) scale(${movement > .5 ? .94 : 1})` }}/>
+        <img className="flora-layer" src={asset('flora-foreground.png')} alt="" aria-hidden="true" style={{ transform:`translate3d(${environmentPointer.x * -28}px,${environmentPointer.y * -7}px,0) scale(1.07)` }}/>
         <div className="particles" aria-hidden="true">{particles.map((particle) => <i key={particle.id} style={{ left:`${particle.left}%`, width:particle.size, height:particle.size, animationDelay:`${particle.delay}s`, animationDuration:`${particle.duration}s` }} />)}</div>
         <header className="site-header">
           <a className="wordmark" href="#beginning" aria-label={t('Elio’s Ocean Investigation — beginning','Elios Ozean-Untersuchung — Anfang')}><span className="wordmark-dot" /><span>{t('Elio’s Ocean','Elios Ozean-')}<br />{t('Investigation','Untersuchung')}</span></a>
@@ -335,9 +345,9 @@ export function Experience({ language }: { language: 'en' | 'de' | 'fr' }) {
 
       {journeyStarted && !expeditionComplete && !coralWorld && !twilightWorld && !ventWorld && <section id="descent" className="descent-zone" aria-labelledby="descent-title">
         <div className="collage-layer collage-descent" aria-hidden="true" />
-        <div className="layers layer-sun" style={{opacity:1-diveResponse*.72,transform:`translate3d(${pointer.x*-12}px,${pointer.y*-18}px,0)`}}/><div className="layers layer-mid" style={{opacity:.25+diveResponse*.7,transform:`translate3d(${pointer.x*16}px,${pointer.y*11}px,0)`}}/><div className="layers layer-deep" style={{opacity:.22+diveResponse*.72}}/>
+        <div className="layers layer-sun" style={{opacity:1-diveResponse*.72,transform:`translate3d(${environmentPointer.x*-12}px,${environmentPointer.y*-18}px,0)`}}/><div className="layers layer-mid" style={{opacity:.25+diveResponse*.7,transform:`translate3d(${environmentPointer.x*16}px,${environmentPointer.y*11}px,0)`}}/><div className="layers layer-deep" style={{opacity:.22+diveResponse*.72}}/>
         <div className="descent-reactive-dark" aria-hidden="true" style={{opacity:diveResponse*.58}}/>
-        <div className={`descent-life ${movement>.32?'agitated':''}`} aria-hidden="true" style={{opacity:Math.max(0,(diveResponse-.34)*1.5),transform:`translate3d(${pointer.x*-22}px,${pointer.y*-13}px,0)`}}>{deepLife.map(item=><i key={item.id} style={{left:`${item.left}%`,top:`${item.top}%`,scale:item.scale,animationDelay:`${item.delay}s`}}><b/></i>)}</div>
+        <div className={`descent-life ${movement>.32&&!guideDragging?'agitated':''}`} aria-hidden="true" style={{opacity:Math.max(0,(diveResponse-.34)*1.5),transform:`translate3d(${environmentPointer.x*-22}px,${environmentPointer.y*-13}px,0)`}}>{deepLife.map(item=><i key={item.id} style={{left:`${item.left}%`,top:`${item.top}%`,scale:item.scale,animationDelay:`${item.delay}s`}}><b/></i>)}</div>
         <div className="descent-brief"><span>{t('Part 1 of 3 · Explore','Teil 1 von 3 · Erkunden')}</span><p>{t('Open three habitats in order. Keep their clues.','Öffne drei Lebensräume der Reihe nach. Merke dir ihre Erkenntnisse.')}</p></div>
         <div className="descent-copy"><p className="eyebrow">{t('Descend','Tauch tiefer')}</p><h2 id="descent-title">{t('It grows darker.','Es wird dunkler.')}<br/>{t('Pressure rises.','Der Druck wächst.')}<br/><em>{t('Life changes.','Das Leben verändert sich.')}</em></h2><p>{t('Move the creature up and down. Watch light and life change.','Bewege das Wesen hoch und runter. Beobachte Licht und Leben.')}</p><div className="descent-response"><span>{t('Available light','Verfügbares Licht')} <b>{Math.round((1-diveResponse)*100)}%</b></span><span>{t('Deep-life signals','Tiefseesignale')} <b>{Math.round(diveResponse*100)}%</b></span></div></div>
         <div className="science-marks" aria-hidden="true"><span style={{top:'12%'}}>0 m · {t('Sunlight zone','Lichtzone')}</span><span style={{top:'48%'}}>200 m · {t('Twilight zone','Dämmerzone')}</span><span style={{top:'82%'}}>1.000 m · {t('Midnight zone','Dunkelzone')}</span></div>
