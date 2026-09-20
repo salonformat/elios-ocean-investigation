@@ -112,6 +112,8 @@ export function Experience({ language }: { language: 'en' | 'de' | 'fr' }) {
   const [adaptations, setAdaptations] = useState<string[]>([]);
   const drawingCanvas = useRef<HTMLCanvasElement | null>(null);
   const frame = useRef<number | null>(null);
+  const lastStateSync = useRef(0);
+  const currentPointer = useRef({ x: 0, y: 0 });
   const lastPointer = useRef({ x: 0, y: 0, time: performance.now() });
   const lastActivity = useRef(performance.now());
   const audio = useRef<{ context: AudioContext; master: GainNode; surface: GainNode; deep: GainNode; creature: GainNode; current: AudioBufferSourceNode; drone: OscillatorNode; signal: OscillatorNode } | null>(null);
@@ -138,6 +140,14 @@ export function Experience({ language }: { language: 'en' | 'de' | 'fr' }) {
   }, [scrollProgress, twilightWorld, twilightExperimentStarted]);
   useEffect(() => { if (twilightWorld && twilightExperimentStarted && isStill) setTwilightInsight(true); }, [twilightWorld,twilightExperimentStarted,isStill]);
   useEffect(() => { setAdaptations([ownHabitat,ownSense,ownFood].filter(Boolean)); }, [ownHabitat,ownSense,ownFood]);
+  useEffect(() => {
+    const element=guideCreatureRef.current; if(!element) return;
+    const next=currentPointer.current;
+    const left=Math.max(14,Math.min(88,50+next.x*36));
+    const top=Math.max(18,Math.min(80,49+next.y*31+scrollProgress*3));
+    const scale=1-scrollProgress*.28+stillness*.1;
+    element.style.transform=`translate3d(${left}vw,${top}vh,0) translate(-50%,-50%) scale(${scale}) rotate(${next.x*4}deg)`;
+  },[scrollProgress,stillness]);
 
   useEffect(() => () => {
     if (frame.current) cancelAnimationFrame(frame.current);
@@ -157,8 +167,10 @@ export function Experience({ language }: { language: 'en' | 'de' | 'fr' }) {
   }, [scrollProgress, stillness, isStill, movement, muted]);
 
   const markActivity = useCallback((intensity = .4) => {
-    lastActivity.current = performance.now(); setStillness(0); setIsStill(false);
-    setMovement((value) => Math.min(1, Math.max(value, intensity)));
+    lastActivity.current = performance.now();
+    if (intensity > .5 && performance.now() - lastStateSync.current > 70) {
+      setMovement((value) => Math.min(1, Math.max(value, intensity)));
+    }
   }, []);
 
   const followPointer = (event: React.PointerEvent<HTMLElement>) => {
@@ -168,11 +180,22 @@ export function Experience({ language }: { language: 'en' | 'de' | 'fr' }) {
     const elapsed = Math.max(16, now - lastPointer.current.time);
     const speed = Math.min(1, Math.hypot(dx, dy) / elapsed / 1.25);
     lastPointer.current = { x: event.clientX, y: event.clientY, time: now };
+    const clientX=event.clientX; const clientY=event.clientY;
     markActivity(speed);
     if (frame.current) cancelAnimationFrame(frame.current);
     frame.current = requestAnimationFrame(() => {
-      const next={ x: (event.clientX / window.innerWidth - .5) * 2, y: (event.clientY / window.innerHeight - .5) * 2 };
-      setPointer(next); setEnvironmentPointer(next);
+      const next={ x: (clientX / window.innerWidth - .5) * 2, y: (clientY / window.innerHeight - .5) * 2 };
+      currentPointer.current=next;
+      const left=Math.max(14,Math.min(88,50+next.x*36));
+      const top=Math.max(18,Math.min(80,49+next.y*31+scrollProgress*3));
+      const scale=1-scrollProgress*.28+stillness*.1;
+      if(guideCreatureRef.current){
+        guideCreatureRef.current.style.transform=`translate3d(${left}vw,${top}vh,0) translate(-50%,-50%) scale(${scale}) rotate(${next.x*4}deg)`;
+      }
+      if(now-lastStateSync.current>70){
+        lastStateSync.current=now;
+        setPointer(next); setEnvironmentPointer(next);
+      }
     });
   };
 
@@ -180,11 +203,13 @@ export function Experience({ language }: { language: 'en' | 'de' | 'fr' }) {
     event.preventDefault(); event.stopPropagation();
     markActivity(.55);
     const next={ x:Math.max(-1,Math.min(1,(event.clientX/window.innerWidth-.5)*2)), y:Math.max(-1,Math.min(1,(event.clientY/window.innerHeight-.5)*2)) };
+    currentPointer.current=next;
     const element=guideCreatureRef.current || event.currentTarget as HTMLElement;
-    element.style.left=`${Math.max(8,Math.min(92,50+next.x*44))}%`;
-    element.style.top=`${Math.max(12,Math.min(88,50+next.y*38))}%`;
+    const left=Math.max(8,Math.min(92,50+next.x*44));
+    const top=Math.max(12,Math.min(88,50+next.y*38));
+    element.style.transform=`translate3d(${left}vw,${top}vh,0) translate(-50%,-50%) scale(${creatureScale})`;
     if(frame.current) cancelAnimationFrame(frame.current);
-    frame.current=requestAnimationFrame(()=>setPointer(next));
+    frame.current=requestAnimationFrame(()=>{if(performance.now()-lastStateSync.current>70){lastStateSync.current=performance.now();setPointer(next)}});
   };
   const startGuideTouch = (event: React.PointerEvent<HTMLElement>) => {
     if(event.pointerType!=='touch'&&event.pointerType!=='pen') return;
@@ -223,8 +248,6 @@ export function Experience({ language }: { language: 'en' | 'de' | 'fr' }) {
   };
 
   const depth = Math.round(scrollProgress * 1000); const temperature = (21 - scrollProgress * 17).toFixed(1); const pressure = Math.round(1 + scrollProgress * 100); const light = scrollProgress < .92 ? Math.round((1 - scrollProgress) * 100) : 0;
-  const creatureLeft = Math.max(14, Math.min(88, 50 + pointer.x * 36));
-  const creatureTop = Math.max(18, Math.min(80, 49 + pointer.y * 31 + scrollProgress * 3));
   const creatureScale = 1 - scrollProgress * .28 + stillness * .1;
   const checkedEvidence = Object.values(evidenceChecks).filter(Boolean).length;
   const designReady = Boolean(hasDrawing && ownHabitat && ownSense && ownFood);
@@ -357,7 +380,7 @@ export function Experience({ language }: { language: 'en' | 'de' | 'fr' }) {
         <button className="descend" type="button" onClick={beginJourney}><span>{t('Begin the investigation','Untersuchung beginnen')}</span><ArrowDown size={18}/></button>
       </section>}
 
-      {!expeditionComplete && !coralWorld && !twilightWorld && !ventWorld && <div ref={element=>{guideCreatureRef.current=element}} className={`creature-guide ${movement > .52 ? 'is-wary' : ''} ${isStill ? 'is-near' : ''} ${guideDragging?'is-touch-dragging':''}`} onPointerDown={startGuideTouch} onPointerMove={dragGuideTouch} onPointerUp={stopGuideTouch} onPointerCancel={stopGuideTouch} onLostPointerCapture={stopGuideTouch} style={{ left:`${creatureLeft}%`, top:`${creatureTop}%`, transform:`translate(-50%,-50%) scale(${creatureScale}) rotate(${pointer.x * 4}deg)` }}>
+      {!expeditionComplete && !coralWorld && !twilightWorld && !ventWorld && <div ref={element=>{guideCreatureRef.current=element}} className={`creature-guide ${movement > .52 ? 'is-wary' : ''} ${isStill ? 'is-near' : ''} ${guideDragging?'is-touch-dragging':''}`} onPointerDown={startGuideTouch} onPointerMove={dragGuideTouch} onPointerUp={stopGuideTouch} onPointerCancel={stopGuideTouch} onLostPointerCapture={stopGuideTouch}>
         <div className="creature-glow" style={{ opacity:.35 + stillness * .65 }} aria-hidden="true"/><img className="creature" src={elioCreatureUrl} alt="Elio’s orange-and-blue drawing of an imaginary creature" draggable="false"/>
         <div className="creature-signals" aria-hidden="true"><i/><i/><i/></div>
       </div>}

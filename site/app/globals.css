@@ -33,7 +33,7 @@ button:focus-visible,a:focus-visible { outline:2px solid var(--orange); outline-
 .eyebrow { margin:0 0 18px; color:var(--cyan); font-size:10px; font-weight:600; letter-spacing:.24em; text-transform:uppercase; }
 .hero-copy h1 { margin:0; max-width:700px; font-family:var(--font-della),serif; font-size:clamp(54px,6.5vw,96px); font-weight:400; line-height:.9; letter-spacing:-.042em; text-shadow:0 8px 40px rgba(0,0,0,.42); }
 .lead { margin:28px 0 0; font-size:clamp(14px,1.05vw,17px); font-weight:350; line-height:1.65; letter-spacing:.035em; color:rgba(247,251,248,.95); text-shadow:0 2px 14px rgba(0,0,0,.78); }
-.creature-guide { position:fixed; z-index:8; right:auto; width:min(24vw,360px); transform-origin:center; transition:left .24s ease-out,top .26s ease-out,transform .3s ease-out,opacity 1s,filter .8s; animation:float-orbit 7s ease-in-out infinite; pointer-events:none; }
+.creature-guide { position:fixed; z-index:8; top:0; left:0; right:auto; width:min(24vw,360px); transform:translate3d(50vw,49vh,0) translate(-50%,-50%); transform-origin:center; transition:transform 45ms linear,opacity 1s,filter .8s; animation:float-orbit 7s ease-in-out infinite; pointer-events:none; will-change:transform; backface-visibility:hidden; contain:layout paint style; }
 .creature-guide.is-wary { filter:blur(.35px) saturate(.72); transition-duration:.35s; }
 .creature-guide.is-near { filter:saturate(1.2) brightness(1.12); }
 .creature { position:relative; z-index:2; width:100%; height:auto; filter:drop-shadow(0 18px 20px rgba(0,8,12,.4)) drop-shadow(0 0 14px rgba(32,166,211,.28)); animation:creature-breathe 4.8s ease-in-out infinite alternate; }
@@ -139,7 +139,7 @@ button:focus-visible,a:focus-visible { outline:2px solid var(--orange); outline-
 @keyframes caustics { from { transform:translate3d(-3%,-2%,0) scale(1); opacity:.3; } to { transform:translate3d(3%,3%,0) scale(1.08); opacity:.58; } }
 @keyframes haze { from { opacity:.78; } to { opacity:1; } }
 @keyframes rise { 0% { transform:translate3d(0,0,0); opacity:0; } 10% { opacity:.55; } 55% { transform:translate3d(18px,-55vh,0); } 100% { transform:translate3d(-11px,-115vh,0); opacity:0; } }
-@keyframes float-orbit { 0%,100% { margin-top:0; rotate:-1deg; } 50% { margin-top:-22px; rotate:1.5deg; } }
+@keyframes float-orbit { 0%,100% { translate:0 0; rotate:-1deg; } 50% { translate:0 -18px; rotate:1.5deg; } }
 @keyframes creature-breathe { from { transform:scale(1) skewX(0); } to { transform:scale(1.018) skewX(.4deg); } }
 @keyframes glow { 0%,100% { opacity:.55; transform:scale(.9); } 50% { opacity:1; transform:scale(1.08); } }
 @keyframes down { 0%,100% { transform:translateY(0); } 50% { transform:translateY(6px); } }
@@ -1046,7 +1046,10 @@ button,.design-entry{font-family:var(--font-josefin),sans-serif;-webkit-tap-high
   .descent-copy>p:last-of-type{font-size:12px!important;line-height:1.35!important}
 }
 @media(pointer:coarse){
-  .creature-guide.is-touch-dragging,.coral-creature.is-touch-dragging,.world-creature.is-touch-dragging{
+  .creature-guide.is-touch-dragging{
+    transition:none!important;animation-play-state:paused!important;will-change:transform
+  }
+  .coral-creature.is-touch-dragging,.world-creature.is-touch-dragging{
     transition:none!important;animation-play-state:paused!important;will-change:left,top;transform:translate(-50%,-50%)!important
   }
   .fish-layer,.fauna-layer,.flora-layer,.descent-life,.descent-zone .layers{pointer-events:none!important}
@@ -1068,6 +1071,35 @@ button,.design-entry{font-family:var(--font-josefin),sans-serif;-webkit-tap-high
 .conclusion .evidence-clues article{color:#fff8ed!important;background:rgba(12,15,32,.9)!important}
 .conclusion .evidence-clues article>span{color:#f1d36b!important}
 .conclusion .evidence-clues article h3{color:#fff8ed!important;text-shadow:none!important}
+
+/* Local colour study: keep the published composition, soften only its ocean palette. */
+.ocean-stage::after{
+  background-image:
+    radial-gradient(circle at 82% 22%,rgba(245,170,187,.2),transparent 34%),
+    radial-gradient(circle at 28% 74%,rgba(197,171,217,.13),transparent 38%),
+    linear-gradient(108deg,rgba(119,218,215,.035),rgba(244,176,190,.1)),
+    radial-gradient(circle at 54% 38%,transparent 0 38%,rgba(20,13,36,.1) 76%,rgba(20,13,35,.25) 100%);
+  mix-blend-mode:soft-light;
+}
+.coral-world::after,.hidden-world::after{
+  background-image:
+    radial-gradient(circle at 78% 18%,rgba(246,171,190,.15),transparent 34%),
+    radial-gradient(circle at 22% 72%,rgba(198,173,220,.1),transparent 38%),
+    radial-gradient(circle at 50% 45%,transparent 12%,rgba(31,18,45,.22) 100%);
+  mix-blend-mode:soft-light;
+}
+.ocean-stage + .creature-guide .creature,
+.coral-creature,
+.world-creature{
+  filter:
+    drop-shadow(0 15px 20px rgba(7,12,31,.68))
+    drop-shadow(0 0 2px rgba(255,244,211,.9))
+    drop-shadow(0 0 14px rgba(80,211,220,.48));
+}
+.ocean-stage + .creature-guide .creature-glow{
+  inset:12%;
+  background:radial-gradient(circle,rgba(248,187,190,.2),rgba(83,210,218,.22) 42%,transparent 72%);
+}
 .conclusion .evidence-clues .evidence-choice button{background:rgba(255,248,239,.12)!important;border-color:rgba(255,248,239,.58)!important;color:#fffaf2!important;text-shadow:0 1px 5px rgba(0,0,0,.45)}
 .conclusion .evidence-clues .evidence-choice button:hover{background:rgba(241,211,107,.24)!important;border-color:#f1d36b!important;color:#fff!important}
 .conclusion .evidence-clues .evidence-choice button.selected{background:#c84f59!important;border-color:#fff0c8!important;color:#fff!important;box-shadow:0 0 0 2px rgba(241,211,107,.3),inset 0 0 0 1px rgba(255,255,255,.3)!important}
